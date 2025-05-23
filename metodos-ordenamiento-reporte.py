@@ -174,8 +174,9 @@ def selection_sort(arr):
 
 if __name__ == "__main__":
 
-    #lenghts = [10, 100, 1000, 10000, 100000, 1000000]
-    lenghts = [10, 100, 1000, 10000, 100000]
+    lenghts = [10, 100, 1000, 10000, 100000, 1000000]
+    #lenghts = [10, 100, 1000, 10000, 100000]
+    #lenghts = [10, 100, 1000, 10000]
 
     algorithms = {
         "bubble sort optimizado": bubble_sort_opt,
@@ -222,6 +223,6 @@ if __name__ == "__main__":
     
     df = pd.DataFrame(all_results)
 
-    df.to_csv("sorting_results_pandas.csv", index=False)
+    df.to_csv("sorting_results_pandas.csv", index=False,sep =";", decimal=",")
 
     print(f"sorting_results_pandas.csv saved.")
