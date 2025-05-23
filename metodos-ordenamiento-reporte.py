@@ -98,65 +98,70 @@ def insertion_sort(arr):
         arr[j + 1] = key
     return intercambios
 
-import time
-
-# Variable global para contar los "movimientos" (asignaciones)
-movimientos = 0
-
 def merge_sort(arr):
-    global movimientos
+    # Inicializamos el contador de movimientos para esta llamada de la función
+    movimientos = 0
     if len(arr) > 1:
         mid = len(arr) // 2
         left_half = arr[:mid]
         right_half = arr[mid:]
 
-        merge_sort(left_half)
-        merge_sort(right_half)
+        # Llamadas recursivas: cada llamada ahora devuelve un arreglo ordenado y sus movimientos
+        # Necesitamos sumar los movimientos de las sub-llamadas
+        sorted_left, movs_left = merge_sort(left_half)
+        sorted_right, movs_right = merge_sort(right_half)
+
+        # Sumamos los movimientos de las llamadas recursivas
+        movimientos += movs_left
+        movimientos += movs_right
 
         i = j = k = 0
 
-        while i < len(left_half) and j < len(right_half):
-            if left_half[i] < right_half[j]:
-                arr[k] = left_half[i]
+        # Fusionamos las mitades ordenadas
+        while i < len(sorted_left) and j < len(sorted_right):
+            if sorted_left[i] < sorted_right[j]:
+                arr[k] = sorted_left[i]
                 i += 1
             else:
-                arr[k] = right_half[j]
+                arr[k] = sorted_right[j]
                 j += 1
-            movimientos += 1  # Cada vez que se asigna un elemento, incrementamos el contador
+            movimientos += 1 # Cada asignación a arr[k] es un "movimiento"
             k += 1
 
-        while i < len(left_half):
-            arr[k] = left_half[i]
+
+        while i < len(sorted_left):
+            arr[k] = sorted_left[i]
             i += 1
             k += 1
-            movimientos += 1  # Cada vez que se asigna un elemento, incrementamos el contador
+            movimientos += 1
 
-        while j < len(right_half):
-            arr[k] = right_half[j]
+        while j < len(sorted_right):
+            arr[k] = sorted_right[j]
             j += 1
             k += 1
-            movimientos += 1  # Cada vez que se asigna un elemento, incrementamos el contador
+            movimientos += 1
+
+    return movimientos
+
 
 def generar_lista_aleatoria(largo):
     return [random.randint(0, largo * 10) for _ in range(largo)]
 
 
-import time # Importar el módulo time para medir el tiempo
+import time 
 
 def selection_sort(arr):
     n = len(arr)
-    intercambios = 0 # Inicializar el contador de intercambios
+    intercambios = 0 
 
     for i in range(n):
         min_idx = i
         for j in range(i + 1, n):
             if arr[j] < arr[min_idx]:
-                min_idx = j
-        
-        # Realizar el intercambio solo si el elemento mínimo no es el actual
+                min_idx = j        
         if min_idx != i: 
             arr[i], arr[min_idx] = arr[min_idx], arr[i]
-            intercambios += 1 # Incrementar el contador de intercambios
+            intercambios += 1 
     
     return intercambios
 
@@ -189,20 +194,21 @@ if __name__ == "__main__":
     2 - Rápido
     """
 
-    all_results = [] # This will store dictionaries, which pandas will convert to a DataFrame
+    all_results = []
 
 
     for largo in lenghts:
-        print(f"Testing with list length: {largo}")
+        print(f"Probando con largo de lista : {largo}")
         original_list = generar_lista_aleatoria(largo)
 
         for algo_name, algo_function in algorithms.items():
             list_to_sort = original_list[:]
-
+            print(f"Probando con largo de lista : {largo} algoritmo: {algo_name}")
             start_time = time.time()
             num_swaps = algo_function(list_to_sort)
             end_time = time.time()
             execution_time = (end_time - start_time) * 1000
+            print(f"Probando con largo de lista : {largo} algoritmo: {algo_name} con {num_swaps} intercambios en {execution_time:.2f} ms")
 
             all_results.append({
                 "algoritmo": algo_name,
@@ -210,14 +216,9 @@ if __name__ == "__main__":
                 "tiempo": round(execution_time, 2),
                 "intercambios": num_swaps
             })
-
-    # Convert the list of dictionaries to a pandas DataFrame
+    
     df = pd.DataFrame(all_results)
 
-    # Save to CSV
-    df.to_csv("sorting_results_pandas.csv", index=False) # index=False prevents writing the DataFrame index as a column
+    df.to_csv("sorting_results_pandas.csv", index=False)
 
-    # Save to Excel (requires openpyxl or xlwt/xlsxwriter installed: pip install openpyxl)
-    # df.to_excel("sorting_results_pandas.xlsx", index=False)
-
-    print(f"Results saved to sorting_results_pandas.csv (and optionally .xlsx) using pandas.")
+    print(f"sorting_results_pandas.csv saved.")
