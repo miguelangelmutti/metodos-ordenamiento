@@ -101,15 +101,16 @@ def insertion_sort(arr):
 def merge_sort(arr):
     # Inicializamos el contador de movimientos para esta llamada de la función
     movimientos = 0
+
     if len(arr) > 1:
         mid = len(arr) // 2
         left_half = arr[:mid]
         right_half = arr[mid:]
 
-        # Llamadas recursivas: cada llamada ahora devuelve un arreglo ordenado y sus movimientos
-        # Necesitamos sumar los movimientos de las sub-llamadas
-        sorted_left, movs_left = merge_sort(left_half)
-        sorted_right, movs_right = merge_sort(right_half)
+        # Llamadas recursivas: obtenemos solo los movimientos de las sub-llamadas
+        # El arreglo 'arr' se modificará en su lugar a medida que las sub-llamadas retornen
+        movs_left = merge_sort(left_half)
+        movs_right = merge_sort(right_half)
 
         # Sumamos los movimientos de las llamadas recursivas
         movimientos += movs_left
@@ -117,30 +118,32 @@ def merge_sort(arr):
 
         i = j = k = 0
 
-        # Fusionamos las mitades ordenadas
-        while i < len(sorted_left) and j < len(sorted_right):
-            if sorted_left[i] < sorted_right[j]:
-                arr[k] = sorted_left[i]
+        # Fusionamos las mitades ordenadas (que ahora son los 'left_half' y 'right_half' modificados)
+        while i < len(left_half) and j < len(right_half):
+            if left_half[i] < right_half[j]:
+                arr[k] = left_half[i]
                 i += 1
             else:
-                arr[k] = sorted_right[j]
+                arr[k] = right_half[j]
                 j += 1
             movimientos += 1 # Cada asignación a arr[k] es un "movimiento"
             k += 1
 
-
-        while i < len(sorted_left):
-            arr[k] = sorted_left[i]
+        # Copiamos los elementos restantes de left_half, si los hay
+        while i < len(left_half):
+            arr[k] = left_half[i]
             i += 1
             k += 1
             movimientos += 1
 
-        while j < len(sorted_right):
-            arr[k] = sorted_right[j]
+        # Copiamos los elementos restantes de right_half, si los hay
+        while j < len(right_half):
+            arr[k] = right_half[j]
             j += 1
             k += 1
             movimientos += 1
 
+    # SIEMPRE RETORNAR SOLO LA CANTIDAD DE MOVIMIENTOS
     return movimientos
 
 
@@ -172,7 +175,7 @@ def selection_sort(arr):
 if __name__ == "__main__":
 
     #lenghts = [10, 100, 1000, 10000, 100000, 1000000]
-    lenghts = [10, 100, 1000, 10000]
+    lenghts = [10, 100, 1000, 10000, 100000]
 
     algorithms = {
         "bubble sort optimizado": bubble_sort_opt,
@@ -213,7 +216,7 @@ if __name__ == "__main__":
             all_results.append({
                 "algoritmo": algo_name,
                 "n_elementos": largo,
-                "tiempo": round(execution_time, 2),
+                "tiempo (ms)": round(execution_time, 2),
                 "intercambios": num_swaps
             })
     
