@@ -209,8 +209,13 @@ if __name__ == "__main__":
             list_to_sort = original_list[:]
             print(f"Probando con largo de lista : {largo} algoritmo: {algo_name}")
             start_time = time.time()
-            num_swaps = algo_function(list_to_sort)
-            end_time = time.time()
+            if largo == 1000000 and algo_name in ("bubble sort", "bubble sort optimizado","insertion sort","selection sort"):
+                print(f"Salto {algo_name} por largo de lista {largo} asi evito problemas de performance")
+                num_swaps = -1
+                end_time = start_time
+            else:
+                num_swaps = algo_function(list_to_sort)
+                end_time = time.time()
             execution_time = (end_time - start_time) * 1000
             print(f"Probando con largo de lista : {largo} algoritmo: {algo_name} con {num_swaps} intercambios en {execution_time:.2f} ms")
 
